@@ -128,4 +128,14 @@ int getRelativity(SymStruct st)
     return 0;
 }
 
+void computeProgramLength(map<string, BlockTable> &blkTab, ll &programLength)
+{
+    programLength = 0;
+    for (auto it = blkTab.begin(); it != blkTab.end(); ++it)
+    {
+        programLength += it->second.locCtr;
+        it->second.locCtr = 0;
+    }
+}
+
 #endif

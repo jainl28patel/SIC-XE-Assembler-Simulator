@@ -86,7 +86,7 @@ int main (int argc, char *argv[])
             printTable(litTab);
             cout << "\n\n***Listing File***\n"
                  << endl;
-            // err = pass2(symTab, opTab, litTab, blkTab, regs, vec, programLength, modifications);
+            err = pass2(symTab, opTab, litTab, blkTab, regs, vec, programLength, modifications);
             // print();
             // cout << "\n\n***Object Program***\n"
             //      << endl;
