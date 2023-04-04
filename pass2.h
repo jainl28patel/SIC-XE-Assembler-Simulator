@@ -43,9 +43,22 @@ bool Pass2(map<string, SymStruct> &symTab, map<string, OpCodeStruct> &opTab, map
         {
             // TODO
         }
+        else if(line.opcode == "USE")
+        {
+            blkTab[active.name].locCtr = locCtr;
+            active = blkTab[line.op1]; // block error
+            locCtr = active.locCtr;
+        }
         else if(line.opcode == "BASE")
         {
-
+            auto sym = symTab.find(line.op1);
+            if (sym == symTab.end())
+            {
+                line.err = "Symbol Undefined";
+                err = true;
+                continue;
+            }
+            base = true;
         }
         else if(line.opcode == "LTORG")
         {
@@ -62,28 +75,60 @@ bool Pass2(map<string, SymStruct> &symTab, map<string, OpCodeStruct> &opTab, map
         else if(line.opcode == "WORD")
         {
             locCtr += 3;
-            // create object code
+            err = createObjCodeForWord(*line);
         }
-        else if(pl.opcode == "BYTE" || pl.opcode == "*")
+        else if(line.opcode == "*")
         {
-            if (pl.op1[0] == 'C')
+            createObjectCodeForData(line, 1);
+            if (line.op1[0] == 'C')
+            {
+                locCtr += line.op1.length() - 4;
+            }
+            else if (line.op1[0] == 'X')
+            {
+                locCtr += (line.op1.length() - 4) / 2; // raise error if not a valid prepended hex
+            }
+        }
+        else if(line.opcode == "BYTE" || line.opcode == "*")
+        {
+            createObjectCodeForData(line, 0);
+            if (line.op1[0] == 'C')
             {
                 locCtr += line.op1.length() - 3;
-                // create obj code
             }
-            else if (pl.op1[0] == 'X')
+            else if (line.op1[0] == 'X')
             {
                 locCtr += (line.op1.length() - 3) / 2; // raise error if not a valid prepended hex
-                // create obj code
             }
         }
         else if(line.opcode == "NOBASE")
         {
-
+            base = false;
         }
         else
         {
-
+            OpCodeStruct op = opTab.find(line.opcode)->second;
+            if (line.isFormat4)
+            {
+                locCtr += 4;
+            }
+            else
+            {
+                locCtr += op.possibleFormat;
+            }
+            ll pcRel = active.startingAddress + locCtr;
+            if (op.possibleFormat == FORMAT_2)
+            {
+                err = createObjectCodeWithRegisters(line, opTab, regs);
+            }
+            else if (op.possibleFormat == FORMAT_1)
+            {
+                err = createObjectCodeWithOnlyOpcode(line, opTab);
+            }
+            else
+            {
+                err = createObjectCodeForInstruction(line, opTab, symTab, litTab, pcRel, modifications);
+            }
         }
 
     }
