@@ -33,7 +33,7 @@ int main (int argc, char *argv[])
     // setting the input and output 
     string input_file = argv[1];
     freopen((input_file + ".in").c_str(), "r", stdin);
-    // freopen((input_file + ".out").c_str(), "w", stdout);
+    freopen((input_file + ".out").c_str(), "w", stdout);
 
     // storing the parsed instructions
     vector<parsedLine> vec;
@@ -73,22 +73,23 @@ int main (int argc, char *argv[])
 
     try
     {
-        cout << "***Intermediate File***\n\n"
-             << endl;
+        cout << "-------------------------------------------------------------------\n"
+             << "|                          INTERMEDIATE FILE                      |\n"
+             << "-------------------------------------------------------------------\n\n";
         bool err = Pass1(vec, opTab, symTab, blkTab, litTab, programName, startingAddress);
         if (!err)
         {
+            cout << "\n\n";
+            cout << "--- symTab ---\n";
             printTable(symTab);
+            cout << "\n\n--- blkTab ---\n";
             printTable(blkTab);
-            printTable(litTab);
-            cout << "\n\n***Listing File***\n"
-                 << endl;
             err = Pass2(symTab, opTab, litTab, blkTab, regs, vec, programLength, modifications);
             print();
-            cout << "\n\n***Object Program***\n"
-                 << endl;
+            cout << "-------------------------------------------------------------------\n"
+                << "|                          OBJECT PROGRAM                          |\n"
+                << "-------------------------------------------------------------------\n\n";
         }
-        cout << "** Object codes **" << endl;
         if (!err)
         {
             writeHeaderRecord(programName, startingAddress, programLength);

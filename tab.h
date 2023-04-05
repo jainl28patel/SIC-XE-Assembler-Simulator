@@ -13,13 +13,13 @@ using namespace std;
 map<string, int> regs;
 void buildRegMap()
 {
-    regs["A"] = 1;
-    regs["X"] = 2;
-    regs["L"] = 3;
-    regs["B"] = 4;
-    regs["S"] = 5;
-    regs["T"] = 6;
-    regs["F"] = 7;
+    regs["A"] = 0;
+    regs["X"] = 1;
+    regs["L"] = 2;
+    regs["B"] = 3;
+    regs["S"] = 4;
+    regs["T"] = 5;
+    regs["F"] = 6;
     regs["PC"] = 8;
     regs["SW"] = 9;
 }
@@ -419,7 +419,7 @@ bool enterSymbolTab(parsedLine& line, map<string, SymStruct> &symTab, BlockTable
         line.err = "Label can't be empty";
         return 1;
     }
-    else if(symTab.find(line.label) == symTab.end())
+    else if(symTab.find(line.label) != symTab.end())
     {
         line.err = "Label " + line.label + " already exits, can't be redeclared.";
         return 1;

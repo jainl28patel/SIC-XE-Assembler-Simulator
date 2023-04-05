@@ -116,7 +116,8 @@ bool Pass2(map<string, SymStruct> &symTab, map<string, OpCodeStruct> &opTab, map
             {
                 err = createObjectCodeWithRegisters(line, opTab, regs);
                 line.objCode.format = 2;
-                // cout << line.opcode << " OBJECT CODE IS reg : " << line.objCode.reg1 << endl;
+                line.objCode.ni = 0;
+                line.objCode.xbpe = 0;
             }
             else if (op.possibleFormat == FORMAT_1)
             {

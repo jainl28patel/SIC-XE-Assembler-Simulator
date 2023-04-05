@@ -61,7 +61,7 @@ void printTable(map<string, BlockTable> &mp)
 {
     for (auto it = mp.begin(); it != mp.end(); ++it)
     {
-        print(it->first, it->second.name, it->second.blockLength, it->second.startingAddress, it->second.startingAddress, it->second.number);
+        print(it->second.name, it->second.blockLength, it->second.startingAddress, it->second.number);
     }
 }
 
@@ -144,7 +144,6 @@ void computeProgramLength(map<string, BlockTable> &blkTab, ll &programLength)
 //Isko sahi karna hai
 pair<int, int> genObjcode(ObjectCode obj, parsedLine &pl)
 {
-    // cout << "Gen obj code for : " << pl.opcode << " word : " << obj.isWord << endl;
     if (obj.isWord != -13371337)
     {
         return {obj.isWord, 3};
