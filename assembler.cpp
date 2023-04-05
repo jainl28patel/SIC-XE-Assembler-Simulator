@@ -12,7 +12,6 @@
 
 using namespace std;
 
-
 #define ll long long int
 
 int main (int argc, char *argv[])
@@ -32,8 +31,9 @@ int main (int argc, char *argv[])
 
     // setting the input and output 
     string input_file = argv[1];
-    freopen((input_file + ".in").c_str(), "r", stdin);
-    freopen((input_file + ".out").c_str(), "w", stdout);
+    string output_file = "output";
+    freopen((input_file + ".txt").c_str(), "r", stdin);
+    freopen((output_file + ".txt").c_str(), "w", stdout);
 
     // storing the parsed instructions
     vector<parsedLine> vec;
