@@ -19,14 +19,13 @@ bool Pass2(map<string, SymStruct> &symTab, map<string, OpCodeStruct> &opTab, map
     bool err = false;
     BlockTable active = blkTab["DEFAULT"];
     int numLines = v.size(); // number of parsed lines
-
     // iterate through the vector of parsed lines
     for (int i = 0; i < numLines; i++)
     {
         parsedLine line = v[i];
         if(line.opcode == "START")
         {
-            startingAddress = line.op1;
+            startingAddress = stoi(line.op1);
             locCtr = startingAddress;
         }
         else if(line.opcode == "END")
@@ -35,7 +34,7 @@ bool Pass2(map<string, SymStruct> &symTab, map<string, OpCodeStruct> &opTab, map
             computeProgramLength(blkTab, programLength);
             programL = programLength;
         }
-        else if(line.opcode == "EQU")
+        else if(line.opcode == "EQU" || line.opcode == "LTORG")
         {
             // Implemented in pass-1
         }
@@ -60,10 +59,6 @@ bool Pass2(map<string, SymStruct> &symTab, map<string, OpCodeStruct> &opTab, map
             }
             base = true;
         }
-        else if(line.opcode == "LTORG")
-        {
-            // Implemented in pass-1
-        }
         else if(line.opcode == "RESW")
         {
             locCtr += 3 * stoi(line.op1);
@@ -75,7 +70,7 @@ bool Pass2(map<string, SymStruct> &symTab, map<string, OpCodeStruct> &opTab, map
         else if(line.opcode == "WORD")
         {
             locCtr += 3;
-            err = createObjCodeForWord(*line);
+            err = createObjCodeForWord(line);
         }
         else if(line.opcode == "*")
         {
@@ -105,7 +100,7 @@ bool Pass2(map<string, SymStruct> &symTab, map<string, OpCodeStruct> &opTab, map
         {
             base = false;
         }
-        else
+        else //no assembler directive, mnemonic is present
         {
             OpCodeStruct op = opTab.find(line.opcode)->second;
             if (line.isFormat4)
@@ -120,18 +115,21 @@ bool Pass2(map<string, SymStruct> &symTab, map<string, OpCodeStruct> &opTab, map
             if (op.possibleFormat == FORMAT_2)
             {
                 err = createObjectCodeWithRegisters(line, opTab, regs);
+                line.objCode.format = 2;
             }
             else if (op.possibleFormat == FORMAT_1)
             {
                 err = createObjectCodeWithOnlyOpcode(line, opTab);
+                line.objCode.format = 1;
             }
             else
             {
-                err = createObjectCodeForInstruction(line, opTab, symTab, litTab, pcRel, modifications);
+                err = createObjectCodeForInstruction(line, opTab, symTab, litTab, pcRel, modifications, base, baseRegister);
             }
         }
-
+        v[i] = line;
     }
+    return err;
 }
 
 #endif

@@ -6,7 +6,7 @@
 #include "assemblyParser.h"
 #include "objectProgramGenerator.h"
 #include "pass1.h"
-// #include "pass2.h"
+#include "pass2.h"
 #include "tab.h"
 #include "utils.h"
 
@@ -14,9 +14,6 @@ using namespace std;
 
 
 #define ll long long int
-
-
-ll mod = 1e9 + 7;
 
 int main (int argc, char *argv[])
 {
@@ -78,7 +75,7 @@ int main (int argc, char *argv[])
     {
         cout << "***Intermediate File***\n\n"
              << endl;
-        bool err = Pass1(vec, opTab, symTab, blkTab, litTab, programName);
+        bool err = Pass1(vec, opTab, symTab, blkTab, litTab, programName, startingAddress);
         if (!err)
         {
             printTable(symTab);
@@ -86,20 +83,25 @@ int main (int argc, char *argv[])
             printTable(litTab);
             cout << "\n\n***Listing File***\n"
                  << endl;
-            err = pass2(symTab, opTab, litTab, blkTab, regs, vec, programLength, modifications);
-            // print();
-            // cout << "\n\n***Object Program***\n"
-            //      << endl;
+            err = Pass2(symTab, opTab, litTab, blkTab, regs, vec, programLength, modifications);
+            print();
+            cout << "\n\n***Object Program***\n"
+                 << endl;
         }
-        // if (!err)
-        // {
-        //     writeHeaderRecord(programName, startingAddress);
-        //     writeTextRecord(blkTab, vec);
-        //     writeEndRecord(programLength);
-        //     writeModificationRecord(modifications);
-        // }
+        cout << "** Object codes **" << endl;
+        for(auto it : vec) 
+        {
+            cout <<it.opcode << " " <<it.objCode.data<< endl;
+        }
+        if (!err)
+        {
+            writeHeaderRecord(programName, startingAddress, programLength);
+            writeTextRecord(blkTab, vec);
+            writeModificationRecord(modifications);
+            writeEndRecord(startingAddress);
+        }
     }
-    catch (string err)
+    catch (char *err)
     {
         print(err);
     }

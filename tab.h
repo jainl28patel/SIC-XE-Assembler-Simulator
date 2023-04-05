@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include<deque>
+#include<iomanip>
 #include "structs.h"
 
 using namespace std;
@@ -279,7 +280,7 @@ void build(map<string, OpCodeStruct> &opTab)
     op->possibleFormat = FORMAT_3_4;
     opTab[mnemonic] = *op;
 
-    mnemonic = "STDCH";
+    mnemonic = "STCH";
     op->mnemonic = mnemonic;
     op->opcode = 0x54;
     op->possibleFormat = FORMAT_3_4;
@@ -434,7 +435,9 @@ bool enterSymbolTab(parsedLine& line, map<string, SymStruct> &symTab, BlockTable
                 if (line.op1.find(op) != string::npos)
                 {
                     inValidOperation = true; // use throw and catch into the error
-                    throw op;
+                    string s = "";
+                    s += op;
+                    throw(string) s;
                 }
             }
             // assembler will crash for any other unsupported operands, add them to above list etc.
@@ -444,7 +447,7 @@ bool enterSymbolTab(parsedLine& line, map<string, SymStruct> &symTab, BlockTable
 
                 string validArithmeticOperations = "+-";
                 string symLabel = "";
-                deque<pair<SymStruct, int>> lable;
+                deque<pair<SymStruct, int> > lable;
                 deque<string> operations;
                 int R = 0;
                 for (int i = 0; i < line.op1.length(); i++)
@@ -538,9 +541,9 @@ bool enterSymbolTab(parsedLine& line, map<string, SymStruct> &symTab, BlockTable
                 }
             }
         }
-        catch(char err)
+        catch(char *err)
         {
-            line.err = "Invalid operation for this constant: " +  getString(err);
+            line.err = "Invalid operation for this constant";
             return 1;
         }
     }

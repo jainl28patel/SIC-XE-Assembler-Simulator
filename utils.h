@@ -42,6 +42,7 @@ string toUpperCase(string su)
     return su;
 }
 
+//functions to display the different tables generated in pass 1
 void printTable(map<string, SymStruct> &mp)
 {
     for (auto it = mp.begin(); it != mp.end(); ++it)
@@ -64,9 +65,9 @@ void printTable(map<string, BlockTable> &mp)
     }
 }
 
-std::string string_to_hex(const std::string &input)
+std::string string_to_hex(std::string &input)
 {
-    static const char hex_digits[] = "0123456789ABCDEF";
+    char hex_digits[] = "0123456789ABCDEF";
     // trouble with quotes in c++
     std::string output;
     output.reserve((input.length() - 1) * 2);
@@ -79,6 +80,7 @@ std::string string_to_hex(const std::string &input)
     return output;
 }
 
+// displacement is valid for format 3 instruction
 bool validf3(int disp)
 {
     if (-2048 <= disp && disp <= 2047)
@@ -104,6 +106,7 @@ string print_hex_from_bin(int str)
     return string(buf);
 }
 
+// 
 string getProgramName(string label)
 {
     if (label.length() > 6)
@@ -136,6 +139,43 @@ void computeProgramLength(map<string, BlockTable> &blkTab, ll &programLength)
         programLength += it->second.locCtr;
         it->second.locCtr = 0;
     }
+}
+
+pair<int, int> genObjcode(ObjectCode obj, parsedLine &pl)
+{
+    if (obj.isWord != -13371337)
+    {
+        return {obj.isWord, 3};
+    }
+    int op1 = obj.ni + obj.opcode;
+    if (obj.isOnlyOpcode)
+    {
+        return {obj.opcode, 1};
+    }
+    if (obj.isData)
+    {
+        return {stoi(obj.data, 0, 16), obj.data.length() / 2};
+    }
+    if (obj.hasReg)
+    {
+        int ans = (op1 << 8) + (obj.reg1 << 4);
+        if (obj.reg2 == -1)
+        {
+            return {ans, 2};
+        }
+        else
+        {
+            ans += obj.reg2;
+            return {ans, 2};
+        }
+    }
+    int op2 = obj.xbpe;
+    int op3 = obj.displacement;
+    if (pl.isFormat4)
+    {
+        return {(op1 << 24) + (op2 << 20) + (op3 & 0xffff), 4};
+    }
+    return {(op1 << 16) + (op2 << 12) + (op3 & 0xfff), 3};
 }
 
 #endif

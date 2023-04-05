@@ -81,6 +81,12 @@ struct ModicationRecord
     int start;
     int modified;
 };
-
+struct TextRecord
+{
+    int startingAddress;
+    int size;
+    string text;
+    string label;
+};
 
 #endif

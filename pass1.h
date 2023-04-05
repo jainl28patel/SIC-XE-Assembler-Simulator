@@ -7,11 +7,14 @@
 #include"structs.h"
 #include"utils.h"
 #include"tab.h"
+#include<string>
+#include<sstream>
+#include<iomanip>
 using namespace std;
 
 
 
-bool Pass1(vector<parsedLine> &vec, map<string, OpCodeStruct> &opTab, map<string, SymStruct> &symTab, map<string, BlockTable> &blkTab, map<string, LiteralStruct> &litTab, string &programName)
+bool Pass1(vector<parsedLine> &vec, map<string, OpCodeStruct> &opTab, map<string, SymStruct> &symTab, map<string, BlockTable> &blkTab, map<string, LiteralStruct> &litTab, string &programName, ll& startingAddress)
 {
     /*
         Setting the initial data:
@@ -22,14 +25,13 @@ bool Pass1(vector<parsedLine> &vec, map<string, OpCodeStruct> &opTab, map<string
             locCtr = locCtr of active block
             id = number of active block
     */
-    ll startingAddress = 0;
     ll programLength = 0;
     bool err = false;
     BlockTable active = blkTab["DEFAULT"];
     ll locCtr = active.locCtr;
     int id = active.number;
 
-    vector<pair<int, parsedLine>> lits;
+    vector<pair<int, parsedLine> > lits;
 
     /*
         Reading each parsed line and persorming the pass-1 operation of identification of literals and symbols
@@ -156,7 +158,7 @@ bool Pass1(vector<parsedLine> &vec, map<string, OpCodeStruct> &opTab, map<string
                 }
                 else 
                 {
-                    // check if litral used
+                    // check if literal used
                     if(line.op1[0] == '=')
                     {
                         auto literal = litTab.find(line.op1);
@@ -172,17 +174,29 @@ bool Pass1(vector<parsedLine> &vec, map<string, OpCodeStruct> &opTab, map<string
                                     line.err = "Invalid literal format";
                                     err = true;
                                 }
-                                litSize = 3;
+                                litSize = 3; //* means current PC and PC is of 3 bytes
 
                                 break;
                             case 'C':
-                                litSize = line.op1.length() - 4;
+                                if (line.op1.length() <= 4){
+                                    cout << "Bad literal\n";
+                                    err = true;
+                                    break;
+                                }
+                                litSize = line.op1.length() - 4; //=C"<lit-val>"
                                 break;
                             case 'X':
+                                if (line.op1.length() <= 4){
+                                    cout << "Bad literal\n";
+                                    err = true;
+                                    break;
+                                }
                                 litSize = (line.op1.length() - 4) / 2; // raise error if not a vaild prepended hex
                                 break;
 
                             default:
+                                line.err = "Invalid literal format";
+                                err = true;
                                 break;
                             }
                             litTab[line.op1] = createLiteral(line.op1, active, litSize);

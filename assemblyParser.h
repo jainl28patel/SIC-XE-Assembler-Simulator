@@ -66,7 +66,7 @@ parsedLine parseLine(string line)
 
     // args shouldn't be more than 5
     if (i != line.length())
-        throw new string("Too Many Arguments");
+        throw "Too Many Arguments";
 
     if (s[0] == "")
         return pl;
@@ -121,7 +121,7 @@ parsedLine parseLine(string line)
     else
     {
         if (s[3].compare(",") != 0)
-            throw new string("Too Many Arguments");
+            throw "Too Many Arguments";
         // line containging too many arguments
 
         pl.label = s[0];
