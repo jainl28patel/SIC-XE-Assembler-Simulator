@@ -12,7 +12,7 @@
 #include<iomanip>
 
 TextRecord curr;
-
+bool writeToNew;
 void writeHeaderRecord(string name, int startingAddress, ll programLength)
 {
     // where is length of the object program ? 
@@ -25,11 +25,12 @@ void initTextRecord(int start)
     curr.startingAddress = start;
     curr.label = 'T';
     curr.size = 0;
+    writeToNew = false;
 }
 
 void printRecord(TextRecord t)
 {
-    cout << uppercase << t.label << setfill('0') << setw(6) << hex << t.startingAddress << hex << (t.size / 2) << t.text << "\n";
+    cout << uppercase << t.label << setfill('0') << setw(6) << hex << t.startingAddress << setfill('0') << setw(2)<< hex << (t.size / 2) << t.text << "\n";
 }
 void breakRecord()
 {
@@ -43,7 +44,6 @@ void writeTextEntity(pair<int, int> p, ll &locCtr)
     std::ostringstream ss;
     ss << uppercase << setfill('0') << setw(2 * p.second) << std::hex << p.first;
     std::string result = ss.str();
-    // cout << locCtr << " " << result << endl;
     if ((curr.size + result.length()) <= 60)
     {
         curr.text += result;
@@ -52,7 +52,6 @@ void writeTextEntity(pair<int, int> p, ll &locCtr)
     else
     {
         breakRecord();
-        cout << "New text record is initialized in line 55 address : " << locCtr << endl;
         initTextRecord(locCtr);
     }
 }
@@ -62,14 +61,12 @@ void writeTextRecord(map<string, BlockTable> &blkTab, vector<parsedLine> &vec)
     ll startingAddress = 0;
     ll locCtr = startingAddress;
     BlockTable active = blkTab["DEFAULT"];
-    cout << "New text record is initialized in line 65 address : " << startingAddress << endl;
     initTextRecord(startingAddress);
     ll newRel = active.startingAddress + locCtr;
 
     for (auto &pl : vec)
     {
         newRel = active.startingAddress + locCtr;
-        cout << "line 72 me starting address is "<< active.startingAddress <<" and location counter is "<<locCtr<<endl;
         pair<int, int> p;
         if (pl.opcode == "END")
         {
@@ -91,12 +88,13 @@ void writeTextRecord(map<string, BlockTable> &blkTab, vector<parsedLine> &vec)
             locCtr = active.locCtr;
             newRel = active.startingAddress + locCtr;
             breakRecord();
-            cout << "New text record is initialized in line 93 address : " << newRel << endl;
             initTextRecord(newRel);
         }
         else if (pl.opcode == "WORD")
         {
-
+            if (writeToNew){
+                initTextRecord(newRel);
+            }
             p = genObjcode(pl.objCode, pl);
             writeTextEntity(p, newRel);
             locCtr += 3;
@@ -104,6 +102,9 @@ void writeTextRecord(map<string, BlockTable> &blkTab, vector<parsedLine> &vec)
         else if (pl.opcode == "BYTE")
         {
             p = genObjcode(pl.objCode, pl);
+            if (writeToNew){
+                initTextRecord(newRel);
+            }
             writeTextEntity(p, newRel);
             if (pl.op1[0] == 'X')
             {
@@ -119,23 +120,22 @@ void writeTextRecord(map<string, BlockTable> &blkTab, vector<parsedLine> &vec)
             breakRecord();
             locCtr += stoi(pl.op1);
             newRel = active.startingAddress + locCtr;
-            cout << "New text record is initialized in line 119 address : " << newRel << endl;
             initTextRecord(newRel);
             
         }
         else if (pl.opcode == "RESW")
         {
             breakRecord();
-            cout << "old locCtr: " << locCtr << endl;
-            locCtr += 3 * stoi(pl.op1);cout << "new locCtr: " << locCtr << endl;
+            locCtr += 3 * stoi(pl.op1);
             newRel = active.startingAddress + locCtr;
-            cout << "New text record is initialized in line 126 address : " << newRel << endl;
             initTextRecord(newRel);
-            
         }
         else if (pl.opcode == "*")
         {
             p = genObjcode(pl.objCode, pl);
+            if (writeToNew){
+                initTextRecord(newRel);
+            }
             writeTextEntity(p, newRel);
             if (pl.op1[1] == 'X')
             {
@@ -145,26 +145,30 @@ void writeTextRecord(map<string, BlockTable> &blkTab, vector<parsedLine> &vec)
             {
                 locCtr += (pl.op1.length() - 4);
             }
+            ;
         }
         else
         {
             p = genObjcode(pl.objCode, pl);
-
+            if (writeToNew){
+                initTextRecord(newRel);
+            }
             writeTextEntity(p, newRel);
 
-            cout << pl.opcode <<" Format is : " << pl.objCode.format << endl;
             if (pl.isFormat4)
             {
                 locCtr += 4;
             }
             else if(pl.objCode.format == 2)
             {
+                // cout << "*******xbpe : " <<  pl.objCode.ni << endl;
                 locCtr += 2;
             }
             else
             {
                 locCtr += 3;
             }
+            ;
         }
     }
 }

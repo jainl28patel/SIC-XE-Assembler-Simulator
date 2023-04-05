@@ -89,10 +89,6 @@ int main (int argc, char *argv[])
                  << endl;
         }
         cout << "** Object codes **" << endl;
-        for(auto it : vec) 
-        {
-            cout <<it.opcode << " " <<it.objCode.data<< endl;
-        }
         if (!err)
         {
             writeHeaderRecord(programName, startingAddress, programLength);

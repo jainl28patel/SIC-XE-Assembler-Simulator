@@ -20,6 +20,7 @@ bool createObjCodeForWord(parsedLine& line) //create object code for WORD
     if(isNumeric(line.op1))
     {
         obj.isWord = stoi(line.op1);
+        line.objCode = obj;
         return false;
     }
     line.err = "Use BYTE for strings, integers for WORD";

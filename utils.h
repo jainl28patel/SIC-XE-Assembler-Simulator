@@ -141,8 +141,10 @@ void computeProgramLength(map<string, BlockTable> &blkTab, ll &programLength)
     }
 }
 
+//Isko sahi karna hai
 pair<int, int> genObjcode(ObjectCode obj, parsedLine &pl)
 {
+    // cout << "Gen obj code for : " << pl.opcode << " word : " << obj.isWord << endl;
     if (obj.isWord != -13371337)
     {
         return {obj.isWord, 3};
