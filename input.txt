@@ -1,23 +1,19 @@
-TEST2 START 0
-FIRST LDX #0
-LDB #LENGTH
-BASE LENGTH
-LDA LENGTH
-LDT #10
-LOOP STA ARRY,X
-.jojhkjhjh
-TIXR T
-JLT LOOP
-JAINIL EQU 10
-USE BLOCK2
-MANAN EQU  10
-LDA #10
-USE
-LDA #10
-USE BLOCK2
-STA #2
-USE
-RSUB
-ARRY RESW 10
-LENGTH WORD 12
-END FIRST 
+SUM     START       0
+FIRST   LDX         #0
+        LDA         #0
+        +LDB        #TABLE2
+        BASE        TABLE2
+LOOP    +ADD         TABLE,X
+        ADD         TABLE2,X
+        TIX         COUNT
+        JLT         LOOP
+        +STA        TOTAL
+        RSUB
+
+.In 2.2 Q3 TABLE & TABLE2 were reserving 2000 WORDs each which makes this program invalid
+
+COUNT   RESW        1
+TABLE   RESW        2000
+TABLE2  RESW        2
+TOTAL   RESW        1
+        END         FIRST
