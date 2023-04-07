@@ -1,10 +1,10 @@
 #ifndef PARSER
 #define PARSER
 
-#include<iostream>
-#include<string>
-#include"structs.h"
-#include"utils.h"
+#include <iostream>
+#include <string>
+#include "structs.h"
+#include "utils.h"
 using namespace std;
 
 bool needNoOperands(string s)
@@ -15,7 +15,6 @@ bool needNoOperands(string s)
     // Whole string is converted to Uppercase to bring uniformity for comparision
     return s.compare("RSUB") == 0 || s.compare("NOBASE") == 0 || s.compare("HIO") == 0 || s.compare("FIX") == 0 || s.compare("NORM") == 0 || s.compare("TIO") == 0 || s.compare("START") == 0 || s.compare("SIO") == 0 || s.compare("FLOAT") == 0 || s.compare("CSECT") == 0;
 }
-
 
 /*
     This function parses the line and returns the parsedLine struct.
@@ -31,38 +30,36 @@ bool needNoOperands(string s)
      * size == 4 => [label, opcode, operand1, operand2] or [opcode, operand1, operand2, operand3]
 */
 
-
-parsedLine parseLine(string line) 
+parsedLine parseLine(string line)
 {
     parsedLine pl;
-    
-    // line length
-    int i = 0;
 
-    // temp storage of max five elements
+    int i = 0;
     string s[5] = {"", "", "", "", ""};
-    for(int j = 0; j < 5 && i < line.length(); j++)
+
+    for (int j = 0; j < 5 && i < line.length(); j++)
     {
         // skip all the blank space
         for (; i < line.length() && (line[i] == ' ' || line[i] == '\t'); i++)
             ;
         // store the value
-        for (; i < line.length() && (line[i] != ' ' && line[i] != '\t'); i++)
+        for (; i < line.length() && (!(line[i] == ' ' || line[i] == '\t')); i++)
             s[j] += line[i];
+    }
+
+    if (s[0] == "")
+    {
+        pl.isEmpty = true;
+        return pl;
+    }
+    else if (s[0][0] == '.')
+    {
+        pl.isComment = true;
+        return pl;
     }
 
     for (; i < line.length() && (line[i] == ' ' || line[i] == '\t'); i++)
         ;
-    
-    // comment line begins with '.'
-    if (s[0] != "" && s[0][0] == '.')
-    {
-        for (i = 0; i < line.length() && (line[i] == ' ' || line[i] == '\t'); i++)
-            ;
-        for (; i < line.length(); i++)
-            pl.opcode += line[i];
-        return pl;
-    }
 
     // args shouldn't be more than 5
     if (i != line.length())
@@ -76,7 +73,7 @@ parsedLine parseLine(string line)
     else if (s[2] == "")
     {
         // format 1
-        if(needNoOperands(s[1]))
+        if (needNoOperands(s[1]))
         {
             pl.label = s[0];
             pl.opcode = s[1];

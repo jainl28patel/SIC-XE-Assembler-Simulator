@@ -21,13 +21,12 @@
 
 
 --- symTab ---
-4e616d65 	 6c6f636b 
-ARRY 	 1a 1a 
-FIRST 	 0 0 
-JAINIL 	 a a 
-LENGTH 	 38 38 
-LOOP 	 c c 
-MANAN 	 a a 
+ARRY 1a 
+FIRST 0 
+JAINIL a 
+LENGTH 38 
+LOOP c 
+MANAN a 
 
 
 --- blkTab ---

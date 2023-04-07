@@ -48,6 +48,7 @@ struct parsedLine
     ll location;
     bool isComment = false;
     bool isFormat4 = false;
+    bool isEmpty = false;
     ObjectCode objCode;
 };
 

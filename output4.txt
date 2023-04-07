@@ -1,3 +1,26 @@
+TEST2 
+FIRST 
+LDB 
+BASE 
+LDA 
+LDT 
+LOOP 
+.jojhkjhjh 
+TIXR 
+JLT 
+JAINIL 
+USE 
+MANAN 
+LDA 
+USE 
+LDA 
+USE 
+STA 
+USE 
+RSUB 
+ARRY 
+LENGTH 
+END 
 -------------------------------------------------------------------
 |                          INTERMEDIATE FILE                      |
 -------------------------------------------------------------------

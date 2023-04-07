@@ -1,10 +1,11 @@
 #ifndef UTILS
 #define UTILS
 
-#include<iostream>
-#include<string>
-#include<map>
-#include<vector>
+#include <iostream>
+#include <string>
+#include <map>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 #define ll long long int
@@ -42,12 +43,13 @@ string toUpperCase(string su)
     return su;
 }
 
-//functions to display the different tables generated in pass 1
+// functions to display the different tables generated in pass 1
 void printTable(map<string, SymStruct> &mp)
 {
+    print('Name', '\t', 'Address in block');
     for (auto it = mp.begin(); it != mp.end(); ++it)
     {
-        print(it->first, it->second.location);
+        print(it->first, '\t', it->second.location, it->second.location);
     }
 }
 void printTable(map<string, LiteralStruct> &mp)
@@ -106,7 +108,7 @@ string print_hex_from_bin(int str)
     return string(buf);
 }
 
-// 
+//
 string getProgramName(string label)
 {
     if (label.length() > 6)
@@ -141,7 +143,7 @@ void computeProgramLength(map<string, BlockTable> &blkTab, ll &programLength)
     }
 }
 
-//Isko sahi karna hai
+// Isko sahi karna hai
 pair<int, int> genObjcode(ObjectCode obj, parsedLine &pl)
 {
     if (obj.isWord != -13371337)

@@ -15,8 +15,7 @@ clean:
 	$(RM) assembler.o assembler
 
 run:
-	./assembler input
-	echo "Output file: output.txt"
+	./assembler input.txt output.txt
 
 check_version:
 	$(CXX) $(CXXFLAGS) -dM -E - < /dev/null | grep __cplusplus | awk '{print $3}' | xargs test 201103L -le
