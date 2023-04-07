@@ -46,10 +46,10 @@ string toUpperCase(string su)
 // functions to display the different tables generated in pass 1
 void printTable(map<string, SymStruct> &mp)
 {
-    print('Name', '\t', 'Address in block');
+    cout<<"Name \t Address in block\n";
     for (auto it = mp.begin(); it != mp.end(); ++it)
     {
-        print(it->first, '\t', it->second.location, it->second.location);
+        print(it->first, '\t', it->second.location);
     }
 }
 void printTable(map<string, LiteralStruct> &mp)
