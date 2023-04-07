@@ -60,7 +60,11 @@ int main(int argc, char *argv[])
             break;
         }
         parsedLine pline = parseLine(s);
-        if (!pline.isEmpty && !pline.isComment && !(pline.label == "" && pline.opcode == "" && pline.op1 == "" && pline.op2 == ""))
+        if(pline.err != "")
+        {
+            cout << "ERROR on line " << pline.location << " : " << pline.err << endl;
+        }
+        else if (!pline.isEmpty && !pline.isComment && !(pline.label == "" && pline.opcode == "" && pline.op1 == "" && pline.op2 == ""))
             vec.push_back(pline);
     }
 
@@ -93,7 +97,7 @@ int main(int argc, char *argv[])
     }
     catch (char *err)
     {
-        cout<<"Error while parsing :"<<err<<endl;
+        cout<<"Error in the pass :"<<err<<endl;
         return 1;
     }
 
