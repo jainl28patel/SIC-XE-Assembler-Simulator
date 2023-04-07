@@ -1,8 +1,7 @@
-#include<iostream>
-#include<vector>
-#include<map>
-#include<string>
-#include "struct.h"
+#include <iostream>
+#include <vector>
+#include <map>
+#include <string>
 #include "assemblyParser.h"
 #include "objectProgramGenerator.h"
 #include "pass1.h"
@@ -14,26 +13,22 @@ using namespace std;
 
 #define ll long long int
 
-int main (int argc, char *argv[])
+int main(int argc, char *argv[])
 {
-    // fast input output
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    cout.tie(NULL);
-
     // check for valid arguments
-    if (argc != 2)
+    if (argc != 3)
     {
         cout << "Invalid arguments" << endl;
-        cout << "Usage : ./assembler <input_file>.in" << endl;
+        cout << "Usage : ./assembler <input file name> <output file name>" << endl;
         exit(1);
     }
 
-    // setting the input and output 
+
+    // setting the input and output
     string input_file = argv[1];
-    string output_file = "output";
-    freopen((input_file + ".txt").c_str(), "r", stdin);
-    freopen((output_file + ".txt").c_str(), "w", stdout);
+    string output_file = argv[2];
+    freopen((input_file).c_str(), "r", stdin);
+    freopen((output_file).c_str(), "w", stdout);
 
     // storing the parsed instructions
     vector<parsedLine> vec;
@@ -42,11 +37,11 @@ int main (int argc, char *argv[])
     map<string, BlockTable> blkTab;
     map<string, LiteralStruct> litTab;
     vector<ModicationRecord> modifications;
-    
+
     // default block
     BlockTable b;
     blkTab["DEFAULT"] = b;
-    
+
     // build the opTab and regTab
     build(opTab);
     buildRegMap();
@@ -65,10 +60,12 @@ int main (int argc, char *argv[])
             break;
         }
         parsedLine pline = parseLine(s);
-        if (!(pline.label == "" && pline.opcode == "" && pline.op1 == "" && pline.op2 == ""))
+        if(pline.err != "")
         {
-            vec.push_back(pline);
+            cout << "ERROR on line " << pline.location << " : " << pline.err << endl;
         }
+        else if (!pline.isEmpty && !pline.isComment && !(pline.label == "" && pline.opcode == "" && pline.op1 == "" && pline.op2 == ""))
+            vec.push_back(pline);
     }
 
     try
@@ -87,8 +84,8 @@ int main (int argc, char *argv[])
             err = Pass2(symTab, opTab, litTab, blkTab, regs, vec, programLength, modifications);
             print();
             cout << "-------------------------------------------------------------------\n"
-                << "|                          OBJECT PROGRAM                          |\n"
-                << "-------------------------------------------------------------------\n\n";
+                 << "|                          OBJECT PROGRAM                          |\n"
+                 << "-------------------------------------------------------------------\n\n";
         }
         if (!err)
         {
@@ -100,7 +97,8 @@ int main (int argc, char *argv[])
     }
     catch (char *err)
     {
-        print(err);
+        cout<<"Error in the pass :"<<err<<endl;
+        return 1;
     }
 
     return 0;
