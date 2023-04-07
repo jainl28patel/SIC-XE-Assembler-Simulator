@@ -437,7 +437,9 @@ bool enterSymbolTab(parsedLine& line, map<string, SymStruct> &symTab, BlockTable
                     inValidOperation = true; // use throw and catch into the error
                     string s = "";
                     s += op;
-                    throw(string) s;
+                    // throw(string) s;
+                    line.err = "Invalid operation : " + s;
+                    return true;
                 }
             }
             // assembler will crash for any other unsupported operands, add them to above list etc.
@@ -467,7 +469,7 @@ bool enterSymbolTab(parsedLine& line, map<string, SymStruct> &symTab, BlockTable
                         }
                         if (symTab.find(symLabel) == symTab.end())
                         {
-                            line.err = "Undefined " + symLabel;
+                            line.err = "Undefined symbol : " + symLabel;
                             return true;
                         }
                         if (symLabel == "")
@@ -492,7 +494,7 @@ bool enterSymbolTab(parsedLine& line, map<string, SymStruct> &symTab, BlockTable
                 {
                     if (symTab.find(symLabel) == symTab.end())
                     {
-                        line.err = "Undefined " + symLabel;
+                        line.err = "Undefined symbol : " + symLabel;
                         return true;
                     }
                     auto symbol = symTab.find(symLabel)->second;
