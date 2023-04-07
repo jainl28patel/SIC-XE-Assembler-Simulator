@@ -219,7 +219,13 @@ bool Pass1(vector<parsedLine> &vec, map<string, OpCodeStruct> &opTab, map<string
         vec[i] = line;
         if (line.opcode != "END" && line.opcode != "LTORG" && line.opcode != "USE" && line.opcode[0] != '.' && line.opcode != "BASE")
         {
-            cout << setfill('0') << setw(4) << right << hex << line.location << " " << line.label << " " << line.opcode << " " << line.op1 << " " << line.op2 << " " << line.err << "\n";
+            if(line.err != "")
+            {
+                cout << setfill('0') << setw(4) << right << hex << line.location << " " << line.label << " " << line.opcode << " " << line.op1 << " " << line.op2 << "\t\t <------- ERROR : " << line.err << "\n";
+            }
+            else {
+                cout << setfill('0') << setw(4) << right << hex << line.location << " " << line.label << " " << line.opcode << " " << line.op1 << " " << line.op2 <<"\n";   
+            }
         }
     }
     sort(lits.begin(), lits.end(), litsComparator);
